@@ -404,29 +404,53 @@ def cornersHeuristic(state, problem):
 
     "We will use a sum of the Manhattan distances to the left corners "
     manhattan_distance = []
+
+    currentLocation = state[0] #pacman location
+    goals = [] # goals is a list of unvisited goals.
+    for i in range(len(problem.corners)):
+        if not state[1][i]: #state of [1][i] = False if the goal has not been visited
+            goals.append(problem.corners[i])
+            
+    accumulator = 0
+    while len(goals) != 0:
+        j = findClosestCorner (currentLocation, goals)
+        accumulator += manhattanHeuristicPoints(currentLocation, goals[j])
+        currentLocation = goals[j] #move the current location to goal [j]
+        goals.remove(goals[j]) # remove goal[j] from the list of unvisited goals
+        
+    return accumulator
     
-    xy1 = state[0]
-    count = 0.
-    SUM = 0.
+    # xy1 = state[0]
+    # count = 0.
+    # SUM = 0.
+    # for i in range(len(corners)):
+    #     xy2 = corners[i]
+    #     corner_found = state[1][i]
+    #     #print corner_found
+    #     if not corner_found:
+    #         count += 1.
+    #         sss = problem.startGameState
+    #         distance = mazeDistance( xy1, xy2, sss)
+    #         #distance =  abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])            
+    #         manhattan_distance.append( (distance*corner_found) )
+    # return heuristicValue
+
+# Returns the manhattan distance given two points
+def manhattanHeuristicPoints(xy1, xy2):
+    "The Manhattan distance given two points"
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+#returns the index in food where the closest food is
+def findClosestCorner(cur, corners):
+    minDistIndex = -1
+    minDist = -1
     for i in range(len(corners)):
-        xy2 = corners[i]
-        corner_found = state[1][i]
-        #print corner_found
-        if not corner_found:
-            count += 1.
-            sss = problem.startGameState
-            distance = mazeDistance( xy1, xy2, sss)
-            #distance =  abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])            
-            manhattan_distance.append( (distance*corner_found) )
+        dist = manhattanHeuristicPoints(cur, corners[i])
+        if dist!= 0 and (minDist == -1 or minDist >= dist):
+            minDist = dist
+            minDistIndex = i
     
-    if len(manhattan_distance)== 0: return 0
-
-#    return (min(manhattan_distance))*count
-    return min(manhattan_distance)
-
-    #return (count * min(manhattan_distance)) # solution
-    #return 0
-    #return (manhattan_distance)
+    return minDistIndex
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
