@@ -544,8 +544,23 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    "We will use a sum of the Manhattan distances to the left corners "
+    manhattan_distance = []
 
+    currentLocation = position #pacman location
+    goals = foodGrid.asList() # goals is a list of unvisited goals.
+            
+    accumulator = 0
+    while len(goals) != 0:
+        j = findClosestCorner (currentLocation, goals)
+        accumulator += manhattanHeuristicPoints(currentLocation, goals[j])
+        currentLocation = goals[j] #move the current location to goal [j]
+        goals.remove(goals[j]) # remove goal[j] from the list of unvisited goals
+        
+    return accumulator
+    # return 0
+    
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self, state):
