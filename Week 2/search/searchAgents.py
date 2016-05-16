@@ -545,20 +545,31 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     
-    "We will use a sum of the Manhattan distances to the left corners "
-    manhattan_distance = []
+    #"We will use a sum of the Manhattan distances to the left corners "
+    #manhattan_distance = []
 
     currentLocation = position #pacman location
     goals = foodGrid.asList() # goals is a list of unvisited goals.
             
-    accumulator = 0
-    while len(goals) != 0:
-        j = findClosestCorner (currentLocation, goals)
-        accumulator += manhattanHeuristicPoints(currentLocation, goals[j])
-        currentLocation = goals[j] #move the current location to goal [j]
-        goals.remove(goals[j]) # remove goal[j] from the list of unvisited goals
-        
-    return accumulator
+    #accumulator = 0
+    
+    distances = [0]
+    for food in foodGrid.asList():
+        # distances.append(util.manhattanDistance(position, food))
+        distances.append(mazeDistance(position, food, problem.startingGameState))
+    distanceFurthest = max(distances)
+
+    return distanceFurthest
+    
+    # Do a astar search to find the closest food
+    #while len(goals) != 0:
+
+        #    j = findClosestCorner (currentLocation, goals)
+           #j = findClosestCorner (currentLocation, goals)
+           #accumulator += manhattanHeuristicPoints(currentLocation, goals[j])
+           #currentLocation = goals[j] #move the current location to goal [j]
+           #goals.remove(goals[j]) # remove goal[j] from the list of unvisited goals
+           
     # return 0
     
 class ClosestDotSearchAgent(SearchAgent):
@@ -588,9 +599,12 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
+        
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #util.raiseNotDefined()
+        
+        #return len(search.bfs(prob))
+        return search.bfs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -626,7 +640,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
+        #util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
@@ -644,4 +659,5 @@ def mazeDistance(point1, point2, gameState):
     assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
-    return len(search.bfs(prob))
+    #return len(search.bfs(prob))
+    return len(search.astar(prob, manhattanHeuristic))

@@ -209,7 +209,6 @@ def graphSearch(problem, strategy, heuristic=nullHeuristic):
     # You should not get here anyway
     util.raiseNotDefined()
 
-
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
